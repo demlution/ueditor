@@ -58,7 +58,7 @@ UE.plugin.register('simpleupload', function (){
                 var allowFiles = me.getOpt('imageAllowFiles');
 
                 me.focus();
-                me.execCommand('inserthtml', '<img class="loadingclass" id="' + loadingId + '" src="' + me.options.themePath + me.options.theme +'/images/spacer.gif">');
+                me.execCommand('inserthtml', '<img class="loadingclass" id="' + loadingId + '" src="' + me.options.themePath + me.options.theme +'/images/spacer.gif"><p></p>');
 
                 function callback(){
                     try{
@@ -74,6 +74,7 @@ UE.plugin.register('simpleupload', function (){
                             loader.setAttribute('_src', link);
                             loader.setAttribute('alt', json.original || '');
                             loader.removeAttribute('id');
+                            me.fireEvent('contentchange');
                         } else {
                             showErrorLoader && showErrorLoader(json.state);
                         }
