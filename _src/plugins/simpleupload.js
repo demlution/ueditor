@@ -84,6 +84,23 @@ UE.plugin.register('simpleupload', function (){
                     form.reset();
                     domUtils.un(iframe, 'load', callback);
                 }
+
+                function json_callback(json){
+                    link = me.options.imageUrlPrefix + json.url;
+                    if(json.state == 'SUCCESS' && json.url) {
+                        loader = me.document.getElementById(loadingId);
+                        domUtils.removeClasses(loader, 'loadingclass');
+                        loader.setAttribute('src', link);
+                        loader.setAttribute('_src', link);
+                        loader.setAttribute('alt', json.original || '');
+                        loader.removeAttribute('id');
+                        me.fireEvent('contentchange');
+                    } else {
+                        showErrorLoader && showErrorLoader(json.state);
+                    }
+                    form.reset();
+                }
+
                 function showErrorLoader(title){
                     if(loadingId) {
                         var loader = me.document.getElementById(loadingId);
@@ -110,9 +127,48 @@ UE.plugin.register('simpleupload', function (){
                     return;
                 }
 
-                domUtils.on(iframe, 'load', callback);
-                form.action = utils.formatUrl(imageActionUrl + (imageActionUrl.indexOf('?') == -1 ? '?':'&') + params);
-                form.submit();
+                // domUtils.on(iframe, 'load', callback);
+                // form.action = utils.formatUrl(imageActionUrl + (imageActionUrl.indexOf('?') == -1 ? '?':'&') + params);
+
+                form.action = 'http://up.qiniu.com/';
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'token',
+                    value: window.QINIU_UPLOAD_TOKEN
+                }).appendTo(form);
+                $(form).find('input[name=upfile]').attr('name', 'file');
+                // form.submit();
+                $.ajax({
+                    type: "POST",
+                    url: "http://up.qiniu.com/",
+                    data: new FormData(form),
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function(xhr, settings) {
+                        //
+                    },
+                    success: function(response) {
+                        json_callback(response);
+                        var data = {
+                            'objects': [response]
+                        };
+                        var csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+                        $.ajax({
+                            type: "POST",
+                            url: "/store/set_qiniu_image/",
+                            contentType: 'application/json',
+                            data: JSON.stringify(data),
+                            beforeSend: function(xhr, settings) {
+                                xhr.setRequestHeader("X-CSRFToken", csrfmiddlewaretoken);
+                            },
+                            success: function(response) {
+                                //
+                            }
+                        });
+                    }
+                });
+
             });
 
             var stateTimer;
