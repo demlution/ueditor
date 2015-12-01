@@ -3,6 +3,61 @@
     UE.Editor.prototype.loadServerConfig = function(){
         var me = this;
         setTimeout(function(){
+
+            var config = {
+              "imageActionName": "uploadimage",
+              "imageMaxSize": 10485760,
+              "imageFieldName": "upfile",
+              "imageUrlPrefix": "",
+              "imagePathFormat": "",
+              "imageAllowFiles": [
+                ".png",
+                ".jpg",
+                ".jpeg",
+                ".gif",
+                ".bmp"
+              ],
+              "fileActionName": "uploadfile",
+              "filePathFormat": "",
+              "fileFieldName": "upfile",
+              "fileMaxSize": 204800000,
+              "fileUrlPrefix": "",
+              "fileAllowFiles": [
+                ".png",
+                ".jpg",
+                ".jpeg",
+                ".gif",
+                ".bmp"
+              ],
+              "imageManagerActionName": "listimage",
+              "imageManagerListPath": "",
+              "imageManagerListSize": 30,
+              "imageManagerAllowFiles": [
+                ".png",
+                ".jpg",
+                ".jpeg",
+                ".gif",
+                ".bmp"
+              ],
+              "imageManagerUrlPrefix": "",
+              "fileManagerActionName": "listfile",
+              "fileManagerListPath": "",
+              "fileManagerUrlPrefix": "",
+              "fileManagerListSize": 30,
+              "fileManagerAllowFiles": [
+                ".png",
+                ".jpg",
+                ".jpeg",
+                ".gif",
+                ".bmp",
+                ".tif",
+                ".psd"
+              ]
+            }
+            utils.extend(me.options, config);
+            me.fireEvent('serverConfigLoaded');
+            me._serverConfigLoaded = true;
+            return;
             try{
                 me.options.imageUrl && me.setOpt('serverUrl', me.options.imageUrl.replace(/^(.*[\/]).+([\.].+)$/, '$1controller$2'));
 
