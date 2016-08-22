@@ -131,11 +131,15 @@ UE.plugin.register('simpleupload', function (){
                 // form.action = utils.formatUrl(imageActionUrl + (imageActionUrl.indexOf('?') == -1 ? '?':'&') + params);
 
                 form.action = 'http://up.qiniu.com/';
-                $('<input>').attr({
-                    type: 'hidden',
-                    name: 'token',
-                    value: window.QINIU_UPLOAD_TOKEN
-                }).appendTo(form);
+
+                if ($(form).find('input[name=token]').length === 0) {
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'token',
+                        value: window.QINIU_UPLOAD_TOKEN
+                    }).appendTo(form);
+                }
+
                 $(form).find('input[name=upfile]').attr('name', 'file');
                 // form.submit();
                 $.ajax({
