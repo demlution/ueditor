@@ -101,6 +101,7 @@ UE.plugins['autoheight'] = function () {
         //修复内容过多时，回到顶部，顶部内容被工具栏遮挡问题
         var lastScrollY;
         window.onscroll = function(){
+          if (me.window === undefined) return;
             if(lastScrollY === null){
                 lastScrollY = this.scrollY
             }else if(this.scrollY == 0 && lastScrollY != 0){
@@ -112,4 +113,3 @@ UE.plugins['autoheight'] = function () {
 
 
 };
-
