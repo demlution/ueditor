@@ -49,7 +49,7 @@
         },
         codemirror: function (editor, holder){
 
-            var codeEditor = window.CodeMirror(holder, {
+            var codeEditor = window.CodeMirror2(holder, {
                 mode: "text/html",
                 tabMode: "indent",
                 lineNumbers: true,
@@ -93,7 +93,7 @@
             sourceEditorFirst:false
         });
         function createSourceEditor(holder){
-            return sourceEditors[opt.sourceEditor == 'codemirror' && window.CodeMirror ? 'codemirror' : 'textarea'](me, holder);
+            return sourceEditors[opt.sourceEditor == 'codemirror' && window.CodeMirror2 ? 'codemirror' : 'textarea'](me, holder);
         }
 
         var bakCssText;

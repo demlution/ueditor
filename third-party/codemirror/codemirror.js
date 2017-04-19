@@ -1,3 +1,5 @@
+(function(){
+
 // CodeMirror version 2.2
 //
 // All functions that need access to the editor's state live inside
@@ -3579,3 +3581,7 @@ CodeMirror.defineMode("htmlmixed", function(config, parserConfig) {
 });
 
 CodeMirror.defineMIME("text/html", "htmlmixed");
+
+
+window.CodeMirror2 = CodeMirror;
+})();
