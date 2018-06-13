@@ -130,7 +130,7 @@ UE.plugin.register('simpleupload', function (){
                 // domUtils.on(iframe, 'load', callback);
                 // form.action = utils.formatUrl(imageActionUrl + (imageActionUrl.indexOf('?') == -1 ? '?':'&') + params);
 
-                form.action = 'http://up.qiniu.com/';
+                form.action = 'https://upload.qiniu.com/';
 
                 if ($(form).find('input[name=token]').length === 0) {
                     $('<input>').attr({
@@ -144,7 +144,7 @@ UE.plugin.register('simpleupload', function (){
                 // form.submit();
                 $.ajax({
                     type: "POST",
-                    url: "http://up.qiniu.com/",
+                    url: "https://upload.qiniu.com/",
                     data: new FormData(form),
                     cache: false,
                     processData: false,
