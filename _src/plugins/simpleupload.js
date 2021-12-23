@@ -133,47 +133,59 @@ UE.plugin.register('simpleupload', function (){
                 form.action = 'http://up.qiniu.com/';
                 console.log('ueditor form:', form);
 
-                if ($(form).find('input[name=token]').length === 0) {
-                    $('<input>').attr({
-                        type: 'hidden',
-                        name: 'token',
-                        value: window.QINIU_UPLOAD_TOKEN
-                    }).appendTo(form);
-                }
+                (function () {
+                    var fileElement = $(form).find('input[type=file]')[0]
+                    var file = fileElement.files[0]
+                    $.ajax({
+                        type: "POST",
+                        url: "/dapi/pagestatic_admin/create_with_token",
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            bucket: "bazaar4",
+                            filename: file.name
+                        }),
+                        success: function(response) {
+                            console.log('create_with_token response:', response)
+                            $(form).find('input[name=upfile]').attr('name', 'file');
+                            $(form).find('input[name=token]').remove();
+                            $('<input>').attr({
+                                type: 'hidden',
+                                name: 'token',
+                                value: response.object._token
+                            }).appendTo(form);
+                            $(form).find('input[name=key]').remove();
+                            $('<input>').attr({
+                                type: 'hidden',
+                                name: 'key',
+                                value: response.object.key
+                            }).appendTo(form);
 
-                $(form).find('input[name=upfile]').attr('name', 'file');
-                // form.submit();
-                $.ajax({
-                    type: "POST",
-                    url: "http://up.qiniu.com/",
-                    data: new FormData(form),
-                    cache: false,
-                    processData: false,
-                    contentType: false,
-                    beforeSend: function(xhr, settings) {
-                        //
-                    },
-                    success: function(response) {
-                        json_callback(response);
-                        var data = {
-                            'objects': [response]
-                        };
-                        var csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
-                        $.ajax({
-                            type: "POST",
-                            url: "/store/set_qiniu_image/",
-                            contentType: 'application/json',
-                            data: JSON.stringify(data),
-                            beforeSend: function(xhr, settings) {
-                                xhr.setRequestHeader("X-CSRFToken", csrfmiddlewaretoken);
-                            },
-                            success: function(response) {
-                                //
-                            }
-                        });
-                    }
-                });
+                            $.ajax({
+                                type: "POST",
+                                url: "https://up.qiniu.com/",
+                                data: new FormData(form),
+                                cache: false,
+                                processData: false,
+                                contentType: false,
+                                success: function(uploadResponse) {
+                                    console.log('uploadResponse:', uploadResponse);
+                                    json_callback(uploadResponse);
 
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "/dapi/pagestatic_admin/update_after_upload",
+                                        contentType: 'application/json',
+                                        data: JSON.stringify({
+                                            id: response.object.id,
+                                            key: response.object.key,
+                                            data: uploadResponse
+                                        }),
+                                    })
+                                }
+                            });
+                        }
+                    });
+                })();
             });
 
             var stateTimer;
