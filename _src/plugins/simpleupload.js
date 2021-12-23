@@ -131,6 +131,7 @@ UE.plugin.register('simpleupload', function (){
                 // form.action = utils.formatUrl(imageActionUrl + (imageActionUrl.indexOf('?') == -1 ? '?':'&') + params);
 
                 form.action = 'http://up.qiniu.com/';
+                console.log('ueditor form:', form);
 
                 if ($(form).find('input[name=token]').length === 0) {
                     $('<input>').attr({
