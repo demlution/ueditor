@@ -130,6 +130,8 @@ UE.plugin.register('simpleupload', function (){
                 // domUtils.on(iframe, 'load', callback);
                 // form.action = utils.formatUrl(imageActionUrl + (imageActionUrl.indexOf('?') == -1 ? '?':'&') + params);
 
+                var isXpage = window.D && window.D.xpagePlatform === 'xpage' && window.D.xpageAppConfig;
+                var dapiPrefix = isXpage ? ('/xapi/' + window.D.xpageAppConfig.slug + '/dapi') : '/dapi';
                 form.action = 'http://up.qiniu.com/';
                 console.log('ueditor form:', form);
 
@@ -138,7 +140,7 @@ UE.plugin.register('simpleupload', function (){
                     var file = fileElement.files[0]
                     $.ajax({
                         type: "POST",
-                        url: "/dapi/pagestatic_admin/create_with_token",
+                        url: dapiPrefix + "/pagestatic_admin/create_with_token",
                         contentType: 'application/json',
                         data: JSON.stringify({
                             bucket: "bazaar4",
@@ -173,7 +175,7 @@ UE.plugin.register('simpleupload', function (){
 
                                     $.ajax({
                                         type: "POST",
-                                        url: "/dapi/pagestatic_admin/update_after_upload",
+                                        url: dapiPrefix + "/pagestatic_admin/update_after_upload",
                                         contentType: 'application/json',
                                         data: JSON.stringify({
                                             id: response.object.id,
