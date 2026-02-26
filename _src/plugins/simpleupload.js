@@ -87,7 +87,7 @@ UE.plugin.register('simpleupload', function (){
 
                 function json_callback(json){
                     link = me.options.imageUrlPrefix + json.url;
-                    if(json.state == 'SUCCESS' && json.url) {
+                    if((json.state == 'SUCCESS' || json.success) && json.url) {
                         loader = me.document.getElementById(loadingId);
                         domUtils.removeClasses(loader, 'loadingclass');
                         loader.setAttribute('src', link);
@@ -132,7 +132,11 @@ UE.plugin.register('simpleupload', function (){
 
                 var isXpage = window.D && window.D.xpagePlatform === 'xpage' && window.D.xpageAppConfig;
                 var dapiPrefix = isXpage ? ('/xapi/' + window.D.xpageAppConfig.slug + '/dapi') : '/dapi';
-                form.action = 'http://up.qiniu.com/';
+                var UPLOAD_URL = typeof window !== 'undefined' && window.ENV_XSTORE_TYPE === 'xstore'
+                    ? window.QINIU_URL || '/'
+                    : 'https://upload.qiniup.com/'
+
+                form.action = UPLOAD_URL;
                 console.log('ueditor form:', form);
 
                 (function () {
@@ -154,17 +158,17 @@ UE.plugin.register('simpleupload', function (){
                                 type: 'hidden',
                                 name: 'token',
                                 value: response.object._token
-                            }).appendTo(form);
+                            }).prependTo(form);
                             $(form).find('input[name=key]').remove();
                             $('<input>').attr({
                                 type: 'hidden',
                                 name: 'key',
                                 value: response.object.key
-                            }).appendTo(form);
+                            }).prependTo(form);
 
                             $.ajax({
                                 type: "POST",
-                                url: "https://up.qiniu.com/",
+                                url: UPLOAD_URL,
                                 data: new FormData(form),
                                 cache: false,
                                 processData: false,
